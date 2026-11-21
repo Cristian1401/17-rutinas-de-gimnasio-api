@@ -2,10 +2,10 @@ import { z } from "zod";
 import { describe, expect, it } from "vitest";
 
 import { readBearerToken } from "./authHeader";
-import { HttpError, toHttpError, unauthorized } from "./errors";
+import { HttpError, notFound, toHttpError, unauthorized } from "./errors";
 import { handleRouteError, jsonError, jsonOk, readJson } from "./json";
 import { getHealthStatus } from "./status";
-import { parseBody } from "./validation";
+import { parseBody, parseQuery } from "./validation";
 
 const tokenSchema = z.object({ token: z.string().min(1) });
 
@@ -54,6 +54,20 @@ describe("HTTP helpers", () => {
   it("parsea con zod y devuelve detalles de validación", () => {
     expect(parseBody(tokenSchema, { token: "abc" })).toEqual({ token: "abc" });
     expect(() => parseBody(tokenSchema, {})).toThrowError(HttpError);
+  });
+
+  it("parsea query params con zod", () => {
+    const request = new Request("http://localhost/api/rutina?since=2026-01-01T00:00:00Z");
+    expect(parseQuery(z.object({ since: z.iso.datetime() }), request)).toEqual({
+      since: "2026-01-01T00:00:00Z",
+    });
+    expect(() =>
+      parseQuery(z.object({ since: z.iso.datetime() }), new Request("http://localhost?x=1")),
+    ).toThrow(HttpError);
+  });
+
+  it("crea errores 404", () => {
+    expect(notFound("No encontrado")).toMatchObject({ status: 404, code: "NOT_FOUND" });
   });
 
   it("lee el bearer token y rechaza cabeceras inválidas", () => {

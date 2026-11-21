@@ -13,3 +13,8 @@ export function parseBody<T extends ZodType>(schema: T, value: unknown): output<
   }
   return result.data;
 }
+
+export function parseQuery<T extends ZodType>(schema: T, request: Request): output<T> {
+  const params = new URL(request.url).searchParams;
+  return parseBody(schema, Object.fromEntries(params));
+}

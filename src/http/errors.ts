@@ -16,6 +16,10 @@ export function unauthorized(message = "No autorizado"): HttpError {
   return new HttpError(401, "UNAUTHORIZED", message);
 }
 
+export function notFound(message: string): HttpError {
+  return new HttpError(404, "NOT_FOUND", message);
+}
+
 function internalError(message = "Error interno"): HttpError {
   return new HttpError(500, "INTERNAL_ERROR", message);
 }
