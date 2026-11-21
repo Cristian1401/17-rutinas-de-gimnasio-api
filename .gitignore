@@ -1,7 +1,9 @@
 node_modules/
-.expo/
+.npm-cache/
+.next/
+out/
 dist/
-web-build/
+coverage/
 .env*
 !env.example
 *.pem
@@ -9,5 +11,5 @@ web-build/
 *.keystore
 *.jks
 *firebase-adminsdk*.json
-coverage/
+*.tsbuildinfo
 .DS_Store
